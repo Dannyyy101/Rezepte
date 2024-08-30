@@ -9,7 +9,7 @@ export default function InputField({
 }: InputFieldInterface) {
   return (
     <input
-      className="w-full h-10 text-text pl-2 pr-2 focus: outline-none border-primary border-2 bg-background"
+      className={style}
       type={type}
       value={value}
       onChange={(e) => setFunction(e.target.value)}

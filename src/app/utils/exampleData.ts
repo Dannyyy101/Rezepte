@@ -37,7 +37,7 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Black Pepper",
-                    unit: "teaspoon"
+                    unit: "ts"
                 },
                 amount: 1
             }
@@ -45,23 +45,23 @@ export const recipes: Recipe[] = [
         description: [
             {
                 text: "Cook the spaghetti in salted boiling water until al dente.",
-                imageUrl: "https://example.com/images/step1.jpg"
+                imageUrl: "none"
             },
             {
                 text: "Fry the pancetta until crispy.",
-                imageUrl: "https://example.com/images/step2.jpg"
+                imageUrl: "none"
             },
             {
                 text: "Whisk the eggs and Parmesan together in a bowl.",
-                imageUrl: "https://example.com/images/step3.jpg"
+                imageUrl: "none"
             },
             {
                 text: "Drain the spaghetti and mix with the pancetta.",
-                imageUrl: "https://example.com/images/step4.jpg"
+                imageUrl: "none"
             },
             {
                 text: "Remove from heat and stir in the egg and cheese mixture. Season with black pepper.",
-                imageUrl: "https://example.com/images/step5.jpg"
+                imageUrl: "none"
             }
         ],
         thumbnailUrl: "https://example.com/images/carbonara_thumbnail.jpg"
@@ -240,7 +240,7 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Baking Powder",
-                    unit: "teaspoon"
+                    unit: "ts"
                 },
                 amount: 2
             },
