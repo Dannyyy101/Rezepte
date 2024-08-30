@@ -1,3 +1,5 @@
+import { InputHTMLAttributes } from "react";
+
 export interface Recipe {
     id: number;
     name: string;
@@ -19,4 +21,12 @@ export interface IngredientWithAmount {
 export interface Description {
     text: string;
     imageUrl: string;
+}
+
+export interface InputFieldInterface {
+    type: string;
+    value: string;
+    setFunction: (e: string) => void;
+    style: string;
+    placeholder?: string;
 }

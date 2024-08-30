@@ -20,6 +20,7 @@ const config: Config = {
       'primary': '#f05c33',
       'secondary': '#757575',
       'accent': '#b19764',
+      'error': '#FF0000'
      },
   },
   plugins: [],
