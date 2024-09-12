@@ -5,11 +5,13 @@ export interface Recipe {
     name: string;
     ingredients: IngredientWithAmount[];
     description: Description[];
-    thumbnailUrl: string;
+    thumbnailUrl?: string;
+    durcation?:number;
 }
 
 export interface Ingredient {
     name: string;
+    calories?: number,
     unit: string;
 }
 

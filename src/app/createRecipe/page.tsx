@@ -1,65 +1,91 @@
 "use client";
 import { recipes } from "@/app/utils/exampleData";
-import { Description, IngredientWithAmount, Recipe } from "@/app/utils/types";
-import { useEffect, useState } from "react";
+import {
+  Description,
+  Ingredient,
+  IngredientWithAmount,
+  Recipe,
+} from "@/app/utils/types";
+import { ChangeEvent, useRef, useState } from "react";
 import Image from "next/image";
-import InputField from "../components/InputField";
+import imageSymbol from "../../../public/image_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz20.svg";
+import downSymbol from "../../../public/keyboard_double_arrow_down_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz48.svg";
 
-export default function DisplayRecipe() {
+export default function CreateRecipe() {
   const [recipe, setRecipe] = useState<Recipe>({
     name: "",
-    id: 0,
-    description: [{ text: "", imageUrl: "none" }],
-    ingredients: [{ amount: 0, ingredient: { name: "", unit: "" } }],
-    thumbnailUrl: "none",
+    id: -1,
+    description: [{ text: "", imageUrl: "" }],
+    ingredients: [{ ingredient: { name: "", unit: "" }, amount: 0 }],
+    durcation: 0,
+    thumbnailUrl: "",
   });
+  const [image, setImage] = useState<string>();
 
-  useEffect(() => {
-    console.log(recipe);
+  const totalCalories = 400;
+  const hiddenFileInput = useRef<HTMLInputElement | null>(null);
 
-    return () => {};
-  }, [recipe]);
-
-  const handleIngredientsChange = (
-    incredient: IngredientWithAmount,
-    index: number
-  ) => {
-    console.log(incredient)
-    let arr = recipe;
-    arr.ingredients[index] = incredient;
-    setRecipe({...recipe, ingredients:arr.ingredients});
+  const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      URL.createObjectURL(e.target.files[0]);
+    }
   };
 
-  const addIngredientField = () => {
-    let arr = recipe;
-    arr.ingredients.push({ ingredient: { name: "", unit: "" }, amount: 0 });
-    setRecipe({...recipe, ingredients:arr.ingredients});
+  const handleHiddenInputFieldClick = () => {
+    if (hiddenFileInput.current) hiddenFileInput.current.click();
   };
 
   return (
     <>
-      <main className="min-h-screen min-w-screen bg-background flex flex-col">
-        <h1 className="text-5xl font-semibold text-primary mt-14 ml-6">
-          <InputField
-            setFunction={(n: string) => {
-              setRecipe({ ...recipe, name: n });
-            }}
-            type="text"
-            value={recipe.name}
-            style="w-80 focus:outline-none pl-2 pr-2 h-10 text-lg bg-background border border-primary"
+      <main className="min-w-screen bg-background flex flex-col items-center">
+        <section className="min-h-screen grid grid-cols-3 justify-center items-center">
+          <div className="w-full h-full flex justify-center">
+            <div>
+              <DisplayIngredients
+                recipe={recipe}
+                totalCalories={totalCalories}
+                updateRecipe={setRecipe}
+              />
+            </div>
+          </div>
+          <div className="flex flex-col items-center">
+            {image ? (
+              <Image src={image} alt="" width={496} height={496}></Image>
+            ) : (
+              <div className="w-496 h-496 flex justify-center items-center">
+                <button
+                  className="w-48 flex items-center border-border border p-2"
+                  onClick={handleHiddenInputFieldClick}
+                >
+                  <Image
+                    src={imageSymbol}
+                    alt="imageSymbol"
+                    width={32}
+                    height={32}
+                  />
+                  <p>Add thumbnail</p>
+                </button>
+                <input
+                  id="hiddenFileInput"
+                  type="file"
+                  className="hidden"
+                  ref={hiddenFileInput}
+                  value={image}
+                  onChange={(e) => handleThumbnailChange(e)}
+                />
+              </div>
+            )}
+            <a href="#description" className="mt-16 animate-bounce">
+              <Image src={downSymbol} alt="arrowDownSymbol"></Image>
+            </a>
+          </div>
+        </section>
+        <section id="description" className="w-11/12 flex justify-center">
+          <DisplaySteps
+            descriptions={recipe.description}
+            recipe={recipe}
+            updateRecipe={setRecipe}
           />
-        </h1>
-        <section className="flex mt-20">
-          <section className="flex flex-col ml-4 w-5/12">
-            <DisplayIngredients
-              ingredients={recipe.ingredients}
-              addIngredient={handleIngredientsChange}
-              addOneField={addIngredientField}
-            />
-          </section>
-          <section className="flex flex-col w-7/12">
-            <DisplaySetps descriptions={recipe.description} />
-          </section>
         </section>
       </main>
     </>
@@ -67,65 +93,115 @@ export default function DisplayRecipe() {
 }
 
 const DisplayIngredients = ({
-  ingredients,
-  addIngredient,
-  addOneField,
+  recipe,
+  totalCalories,
+  updateRecipe,
 }: {
-  ingredients: IngredientWithAmount[];
-  addIngredient: (e:IngredientWithAmount, i:number) => void;
-  addOneField: () => void;
+  recipe: Recipe;
+  totalCalories: number;
+  updateRecipe: (recipe: Recipe) => void;
 }) => {
+  const addIngredientField = () => {
+    let temp = recipe.ingredients;
+    temp.push({ amount: 0, ingredient: { name: "", unit: "" } });
+    updateRecipe({ ...recipe, ingredients: temp });
+  };
+
+  const addIngredientNameAtIndex = (name: string, index: number) => {
+    let temp = recipe.ingredients;
+    temp[index] = {
+      ...temp[index],
+      ingredient: { ...temp[index].ingredient, name: name },
+    };
+    updateRecipe({ ...recipe, ingredients: temp });
+  };
+  const addIngredientAmountAtIndex = (amount: number, index: number) => {
+    let temp = recipe.ingredients;
+    temp[index] = {
+      ...temp[index],
+      amount: amount,
+    };
+    updateRecipe({ ...recipe, ingredients: temp });
+  };
   return (
     <>
-      <section className="w-1/2 border border-primary ml-4">
-        <h1 className="text-primary text-3xl text-center mt-2">Ingredients</h1>
+      <section className="w-64 min-h-36 mt-24 border border-border">
+        <input
+          className="mt-2 ml-2 w-3/4 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
+          placeholder="name"
+          value={recipe.name}
+          onChange={(e) => updateRecipe({ ...recipe, name: e.target.value })}
+        />
         <section className="flex flex-col m-2">
-          {ingredients.map((value, index) => (
-            <div className="flex w-full" key={"ingredient: " + index}>
-              <InputField
-                setFunction={(n: string) => {
-                  addIngredient({
-                    ingredient: { name: n, unit: "" },
-                    amount: value.amount,
-                  }, index);
-                }}
-                type="text"
-                value={value.ingredient.name}
-                style="w-2/3 focus:outline-none pl-2 pr-2 h-10 text-secondary bg-background border border-primary"
+          {recipe.ingredients.map((ingredient, index) => (
+            <div key={"" + ingredient + index} className="w-full flex mt-1">
+              <input
+                className="text-text text-sm w-3/4 pl-1 bg-transparent border-b border-border focus:outline-none mr-1"
+                placeholder="ingredient"
+                value={recipe.ingredients[index].ingredient.name}
+                onChange={(e) =>
+                  addIngredientNameAtIndex(e.target.value, index)
+                }
               />
-              <InputField
-                setFunction={(n: string) => {
-                  addIngredient({
-                    ingredient: value.ingredient,
-                    amount: parseInt(n),
-                  }, index);
-                }}
-                type="number"
-                value={value.amount.toString()}
-                style="w-1/3 focus:outline-none pl-2 pr-2 h-10 text-secondary bg-background border border-primary"
-                key={"ingredient: " + index}
+              <input
+                className="text-text text-sm w-1/4 pl-1 bg-transparent border-b border-border focus:outline-none ml-1"
+                placeholder="amount"
+                value={recipe.ingredients[index].amount}
+                onChange={(e) =>
+                  addIngredientAmountAtIndex(parseInt(e.target.value), index)
+                }
               />
             </div>
           ))}
-          <button onClick={addOneField}>+</button>
+        </section>
+        <div className="w-full h-8 flex justify-center">
+          <button className="text-border" onClick={addIngredientField}>
+            +
+          </button>
+        </div>
+        <section className="w-full h-12 flex border-t border-border items-center">
+          <input
+            type="number"
+            className="ml-2 w-3/4 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
+            placeholder="durcation"
+          />
         </section>
       </section>
     </>
   );
 };
 
-const DisplaySetps = ({ descriptions }: { descriptions: Description[] }) => {
+const DisplaySteps = ({
+  descriptions,
+  recipe,
+  updateRecipe,
+}: {
+  descriptions: Description[];
+  recipe: Recipe;
+  updateRecipe: (recipe: Recipe) => void;
+}) => {
+  const addIngredientField = () => {
+    let temp = recipe.description;
+    temp.push({ text: "", imageUrl: "" });
+    updateRecipe({ ...recipe, description: temp });
+  };
+  const addDescriptionTextAtIndex = (text: string, index: number) => {
+    let temp = recipe.description;
+    temp[index] = { text: text, imageUrl: "" };
+    updateRecipe({ ...recipe, description: temp });
+  };
   return (
     <>
-      <section className="w-11/12">
+      <section className="w-11/12 mb-8">
         {descriptions.map((description, index) => (
-          <section
-            className="flex flex-col border-b border-b-primary mb-2"
-            key={"description: " + index}
-          >
-            <h1 className="text-xl text-primary">Step: {index + 1}</h1>
-            <p className="text-secondary mb-2">{description.text}</p>
-            {description.imageUrl != "none" ? (
+          <section className="flex flex-col mb-2">
+            <h1 className="text-xl text-text">Step: {index + 1}</h1>
+            <input
+              className="text-text mb-2 pl-1 bg-transparent border-b border-border focus:outline-none"
+              value={recipe.description[index].text}
+              onChange={(e) => addDescriptionTextAtIndex(e.target.value, index)}
+            />
+            {description.imageUrl ? (
               <Image
                 src={""}
                 alt={`image-for-step-${index}`}
@@ -137,6 +213,11 @@ const DisplaySetps = ({ descriptions }: { descriptions: Description[] }) => {
             )}
           </section>
         ))}
+        <div className="w-full h-8 flex justify-center">
+          <button className="text-border" onClick={addIngredientField}>
+            +
+          </button>
+        </div>
       </section>
     </>
   );

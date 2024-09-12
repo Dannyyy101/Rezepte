@@ -64,7 +64,8 @@ export const recipes: Recipe[] = [
                 imageUrl: "none"
             }
         ],
-        thumbnailUrl: "https://example.com/images/carbonara_thumbnail.jpg"
+        thumbnailUrl: "",
+        durcation:20
     },
     {
         id: 2,
@@ -101,7 +102,7 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Olive Oil",
-                    unit: "tablespoon"
+                    unit: "ts"
                 },
                 amount: 1
             }
@@ -128,7 +129,8 @@ export const recipes: Recipe[] = [
                 imageUrl: "https://example.com/images/step5_pizza.jpg"
             }
         ],
-        thumbnailUrl: "https://example.com/images/margherita_thumbnail.jpg"
+        thumbnailUrl: "",
+        durcation:20
     },
     {
         id: 3,
@@ -210,7 +212,8 @@ export const recipes: Recipe[] = [
                 imageUrl: "https://example.com/images/step6_curry.jpg"
             }
         ],
-        thumbnailUrl: "https://example.com/images/curry_thumbnail.jpg"
+        thumbnailUrl: "",
+        durcation:20
     },
     {
         id: 4,
@@ -292,7 +295,8 @@ export const recipes: Recipe[] = [
                 imageUrl: "https://example.com/images/step6_cake.jpg"
             }
         ],
-        thumbnailUrl: "https://example.com/images/chocolate_cake_thumbnail.jpg"
+        thumbnailUrl: "",
+        durcation:20
     },
     {
         id: 5,
@@ -356,6 +360,7 @@ export const recipes: Recipe[] = [
                 imageUrl: "https://example.com/images/step5_salad.jpg"
             }
         ],
-        thumbnailUrl: "https://example.com/images/caesar_salad_thumbnail.jpg"
+        thumbnailUrl: "",
+        durcation:20
     }
 ];

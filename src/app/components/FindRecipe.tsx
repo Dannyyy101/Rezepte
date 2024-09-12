@@ -26,7 +26,7 @@ export default function FindRecipe() {
           type="text"
           value={search}
           setFunction={handleSearch}
-          style="min-w-80 w-1/3 h-10 text-text pl-2 pr-2 focus: outline-none border-primary border-2 bg-background"
+          style="min-w-80 w-1/3 h-10 text-text pl-2 pr-2 focus: outline-none border-text border-2 bg-background"
           placeholder="Search"
         />
         <p className="text-error text-center mt-1">{errorMessage}</p>
