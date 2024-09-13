@@ -1,10 +1,10 @@
 "use client";
 import { useState } from "react";
 import InputField from "./InputField";
-import { Recipe } from "../utils/types";
-import { searchForRecipeByName } from "../api/firebase/firestore/searchForRecipeByName";
+import { Recipe } from "../../utils/types";
+import { searchForRecipeByName } from "../../api/firebase/firestore/searchForRecipeByName";
 import DisplayRecipe from "./DisplayRecipe";
-import { recipes } from "../utils/exampleData";
+import { recipes } from "../../utils/exampleData";
 
 export default function FindRecipe() {
   const [search, setSearch] = useState("");
