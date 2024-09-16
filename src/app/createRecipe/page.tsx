@@ -1,50 +1,86 @@
 "use client";
-import { recipes } from "@/app/utils/exampleData";
 import {
   Description,
+  DescriptionImagesWithIndex,
   Ingredient,
-  IngredientWithAmount,
   Recipe,
 } from "@/app/utils/types";
 import { ChangeEvent, useRef, useState } from "react";
 import Image from "next/image";
-import imageSymbol from "../../../public/image_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz20.svg";
 import downSymbol from "../../../public/keyboard_double_arrow_down_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz48.svg";
 import { addRecipe } from "../api/firebase/firestore/addRecipe";
 import { FocuseChildComponent } from "../components/ui/FocusChildComponent";
 import IngredientNotFound from "../components/ui/IngredientNotFound";
+import NumberInputField from "../components/ui/NumberInputField";
+import { saveImage } from "../api/firebase/firestore/saveImage";
+import Navbar from "../components/ui/Navbar";
+import AddImageButton from "../components/ui/AddImageButton";
 
 export default function CreateRecipe() {
   const [recipe, setRecipe] = useState<Recipe>({
     name: "",
     id: -1,
     description: [{ text: "", imageUrl: "" }],
-    ingredients: [{ ingredient: { name: "", unit: "", calories:0 }, amount: 0 }],
-    durcation: 0,
+    ingredients: [
+      { ingredient: { name: "", unit: "", calories: 0 }, amount: 0 },
+    ],
+    duration: 0,
     thumbnailUrl: "",
+    portions: 0,
   });
-  const [image, setImage] = useState<string>();
+  const [descriptionImages, setDescriptionImages] = useState<
+    DescriptionImagesWithIndex[]
+  >([]);
+  const [image, setImage] = useState<File | null>(null);
+  const [errorMessage, setErrorMessage] = useState<string>("");
   const [ingredientNotFound, setIngredientNotFound] = useState<{
     ingredient: Ingredient;
     found: boolean;
   }>({ ingredient: { name: "", unit: "", calories: 0 }, found: true });
 
   const totalCalories = 400;
-  const hiddenFileInput = useRef<HTMLInputElement | null>(null);
   const mainRef = useRef<HTMLDivElement>(null);
 
   const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      setImage(URL.createObjectURL(e.target.files[0]));
+      setImage(e.target.files?.[0]);
     }
   };
 
-  const handleHiddenInputFieldClick = () => {
-    if (hiddenFileInput.current) hiddenFileInput.current.click();
-  };
-
   const submit = async () => {
-    const { error, product } = await addRecipe(recipe);
+    let thumbnailPath = "";
+    let descriptions = [...recipe.description];
+    if (image) {
+      const { result, error } = await saveImage(
+        image,
+        "thumbnail",
+        recipe.name
+      );
+      thumbnailPath = result;
+      setErrorMessage(error);
+    }
+    if (descriptionImages.length > 0) {
+      const descriptionPromises = descriptionImages.map(async (e) => {
+        const { result, error } = await saveImage(
+          e.file,
+          "step" + e.index,
+          recipe.name
+        );
+        descriptions[e.index - 1].imageUrl = result;
+        setErrorMessage(error);
+      });
+    
+      await Promise.all(descriptionPromises);
+    }
+    
+    console.log(descriptions)
+    const updatedRecipe: Recipe = {
+      ...recipe,
+      thumbnailUrl: thumbnailPath,
+      description: descriptions,
+    };
+
+    const { error, product } = await addRecipe(updatedRecipe);
     if (error === "product-not-found" && product) {
       setIngredientNotFound({ ingredient: product, found: false });
     }
@@ -54,9 +90,10 @@ export default function CreateRecipe() {
     <>
       <main
         ref={mainRef}
-        className="min-w-screen bg-background flex flex-col items-center z-0"
+        className="min-w-screen bg-background flex flex-col items-center"
       >
-        <section className="min-h-screen grid grid-cols-3 justify-center items-center">
+        <Navbar />
+        <section className="min-h-screen md:grid grid-cols-3 justify-center items-center flex flex-col">
           <div className="w-full h-full flex justify-center">
             <div>
               <DisplayIngredients
@@ -69,7 +106,7 @@ export default function CreateRecipe() {
           <div className="flex flex-col items-center">
             {image ? (
               <Image
-                src={image}
+                src={URL.createObjectURL(image)}
                 alt=""
                 width={496}
                 height={496}
@@ -77,25 +114,9 @@ export default function CreateRecipe() {
               ></Image>
             ) : (
               <div className="w-496 h-496 flex justify-center items-center">
-                <button
-                  className="w-48 flex items-center border-border border p-2"
-                  onClick={handleHiddenInputFieldClick}
-                >
-                  <Image
-                    src={imageSymbol}
-                    alt="imageSymbol"
-                    width={32}
-                    height={32}
-                  />
-                  <p>Add thumbnail</p>
-                </button>
-                <input
-                  id="hiddenFileInput"
-                  type="file"
-                  className="hidden"
-                  ref={hiddenFileInput}
-                  value={image}
-                  onChange={(e) => handleThumbnailChange(e)}
+                <AddImageButton
+                  text="Add thumbnail"
+                  handleClicked={handleThumbnailChange}
                 />
               </div>
             )}
@@ -113,6 +134,8 @@ export default function CreateRecipe() {
         </section>
         <section id="description" className="w-11/12 flex justify-center">
           <DisplaySteps
+            setImages={setDescriptionImages}
+            images={descriptionImages}
             descriptions={recipe.description}
             recipe={recipe}
             updateRecipe={setRecipe}
@@ -152,7 +175,7 @@ const DisplayIngredients = ({
 }) => {
   const addIngredientField = () => {
     let temp = recipe.ingredients;
-    temp.push({ amount: 0, ingredient: { name: "", unit: "" } });
+    temp.push({ amount: 0, ingredient: { name: "", unit: "", calories: 0 } });
     updateRecipe({ ...recipe, ingredients: temp });
   };
 
@@ -172,6 +195,13 @@ const DisplayIngredients = ({
     };
     updateRecipe({ ...recipe, ingredients: temp });
   };
+  const addDuration = (duration: number) => {
+    updateRecipe({ ...recipe, duration: duration });
+  };
+  const addPortions = (portions: number) => {
+    updateRecipe({ ...recipe, portions: portions });
+  };
+
   return (
     <>
       <section className="w-64 min-h-36 mt-24 border border-border">
@@ -192,13 +222,10 @@ const DisplayIngredients = ({
                   addIngredientNameAtIndex(e.target.value, index)
                 }
               />
-              <input
-                className="text-text text-sm w-1/4 pl-1 bg-transparent border-b border-border focus:outline-none ml-1"
-                placeholder="amount"
+              <NumberInputField
                 value={recipe.ingredients[index].amount}
-                onChange={(e) =>
-                  addIngredientAmountAtIndex(parseInt(e.target.value), index)
-                }
+                customStyle="text-text text-sm w-1/4 pl-1 bg-transparent border-b border-border"
+                handleChange={(e) => addIngredientAmountAtIndex(e, index)}
               />
             </div>
           ))}
@@ -208,12 +235,23 @@ const DisplayIngredients = ({
             +
           </button>
         </div>
-        <section className="w-full h-12 flex border-t border-border items-center">
-          <input
-            type="number"
-            className="ml-2 w-3/4 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
-            placeholder="durcation"
-          />
+        <section className="w-full h-16 flex border-t border-border items-center">
+          <div className="flex flex-col">
+            <label className="ml-2 text-label">duration</label>
+            <NumberInputField
+              value={recipe.duration}
+              handleChange={(e) => addDuration(e)}
+              customStyle="ml-2 mr-2 w-3/4 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
+            />
+          </div>
+          <div className="flex flex-col">
+            <label className="ml-2 text-label">portions</label>
+            <NumberInputField
+              value={recipe.portions}
+              handleChange={(e) => addPortions(e)}
+              customStyle="ml-2 mr-2 w-3/4 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
+            />
+          </div>
         </section>
       </section>
     </>
@@ -224,10 +262,14 @@ const DisplaySteps = ({
   descriptions,
   recipe,
   updateRecipe,
+  images,
+  setImages,
 }: {
   descriptions: Description[];
   recipe: Recipe;
   updateRecipe: (recipe: Recipe) => void;
+  images: DescriptionImagesWithIndex[];
+  setImages: (i: DescriptionImagesWithIndex[]) => void;
 }) => {
   const addIngredientField = () => {
     let temp = recipe.description;
@@ -238,6 +280,18 @@ const DisplaySteps = ({
     let temp = recipe.description;
     temp[index] = { text: text, imageUrl: "" };
     updateRecipe({ ...recipe, description: temp });
+  };
+
+  const addDescriptionImageAtIndex = async (
+    image: ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    if (image.target.files) {
+      let temp = [...images];
+      temp.push({ file: image.target.files?.[0], index: index });
+      console.log(temp);
+      setImages(temp);
+    }
   };
   return (
     <>
@@ -253,15 +307,18 @@ const DisplaySteps = ({
               value={recipe.description[index].text}
               onChange={(e) => addDescriptionTextAtIndex(e.target.value, index)}
             />
-            {description.imageUrl ? (
+            {images[index] ? (
               <Image
-                src={""}
+                src={URL.createObjectURL(images[index].file)}
                 alt={`image-for-step-${index}`}
                 width={200}
                 height={200}
               />
             ) : (
-              <></>
+              <AddImageButton
+                text={`Add image`}
+                handleClicked={(e) => addDescriptionImageAtIndex(e, index + 1)}
+              />
             )}
           </section>
         ))}

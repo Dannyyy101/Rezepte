@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import InputField from "./InputField";
 import { Recipe } from "../../utils/types";
 import { searchForRecipeByName } from "../../api/firebase/firestore/searchForRecipeByName";
@@ -8,25 +8,44 @@ import { recipes } from "../../utils/exampleData";
 
 export default function FindRecipe() {
   const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState<Recipe[]>(recipes);
+  const [searchResult, setSearchResult] = useState<Recipe[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
+
+  const debounceSearch = async (search: string): Promise<boolean> => {
+    await new Promise((r) => setTimeout(r, 500));
+    if (searchRef.current && searchRef.current.value === search) {
+      return false;
+    }
+    return true;
+  };
+
+  const searchRef = useRef<HTMLInputElement | null>(null);
 
   const handleSearch = async (result: string) => {
     setSearch(result);
-    await searchForRecipeByName(result).then((r) => {
-      setSearchResult(r.result);
-      setErrorMessage(r.error);
-    });
+    const succes = await debounceSearch(result);
+    if (succes) {
+      return;
+    }
+    if (result.length > 0) {
+      await searchForRecipeByName(result).then((r) => {
+        setSearchResult(r.result);
+        setErrorMessage(r.error);
+      });
+    } else {
+      setSearchResult([]);
+    }
   };
 
   return (
     <>
       <section className="w-full flex justify-center items-center flex-col">
-        <InputField
+        <input
+          ref={searchRef}
           type="text"
           value={search}
-          setFunction={handleSearch}
-          style="min-w-80 w-1/3 h-10 text-text pl-2 pr-2 focus: outline-none border-text border-2 bg-background"
+          onChange={(e) => handleSearch(e.target.value)}
+          className="min-w-80 w-1/3 h-10 text-text pl-2 pr-2 focus: outline-none border-text border-2 bg-background"
           placeholder="Search"
         />
         <p className="text-error text-center mt-1">{errorMessage}</p>

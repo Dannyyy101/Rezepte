@@ -1,21 +1,14 @@
 "use client";
 import { useState } from "react";
 import IngredientNotFound from "../components/ui/IngredientNotFound";
+import NumberInputField from "../components/ui/NumberInputField";
+
 
 export default function Testing() {
-  const [visible, setVisible] = useState<boolean>(true);
+  const [test, setTest] = useState<number>(0);
   return (
     <>
-      <main>
-        {visible ? (
-           <IngredientNotFound
-           ingredient={{ name: "Tomatoes", unit: "", calories: 0 }}
-           setVisibility={setVisible}
-         />
-        ) : (
-         <></>
-        )}
-      </main>
+
     </>
   );
 }

@@ -1,35 +1,78 @@
 "use client";
-import { recipes } from "@/app/utils/exampleData";
+
 import {
   Description,
-  Ingredient,
-  IngredientWithAmount,
+  DescriptionImagesWithIndex,
   Recipe,
 } from "@/app/utils/types";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import downSymbol from "../../../../public/keyboard_double_arrow_down_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz48.svg";
 import { useParams } from "next/navigation";
-
+import { getRecipeByName } from "@/app/api/firebase/firestore/getRecipeByName";
+import Navbar from "@/app/components/ui/Navbar";
+import Loading from "@/app/components/ui/Loading";
+import { loadImage } from "@/app/api/firebase/firestore/loadImage";
 export default function DisplayRecipe() {
   const params = useParams<{ id: string }>();
-  const [recipe, setRecipe] = useState<Recipe>(recipes[parseInt(params.id)-1]);
-  const totalCalories = 400;
+  const [recipe, setRecipe] = useState<Recipe>({
+    name: "",
+    description: [],
+    id: 0,
+    ingredients: [],
+    duration: 0,
+    totalCalories: 0,
+    portions: 1,
+  });
+  const [thumbnail, setThumbnail] = useState<string>("");
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRecipe = async () => {
+      setLoading(true);
+      const result = await getRecipeByName(params.id);
+      if (result && result.result) {
+        setRecipe(result.result);
+      }
+    };
+    fetchRecipe();
+  }, [params.id]);
+
+  useEffect(() => {
+    const fetchThumbnail = async () => {
+      if (recipe.thumbnailUrl) {
+        const result = await loadImage(recipe.thumbnailUrl);
+        setThumbnail(result.result);
+      }
+    };
+
+    fetchThumbnail();
+    setLoading(false);
+  }, [recipe.thumbnailUrl]);
+
+  if (loading) {
+    return <Loading />;
+  }
 
   return (
     <>
       <main className="min-w-screen  bg-background">
-        <section className="min-h-screen grid grid-cols-3 justify-center items-center">
+        <Navbar />
+        <section className="min-h-screen md:grid grid-cols-3 justify-center items-center flex flex-col">
           <div className="h-full w-full flex justify-center">
-            <DisplayIngredients recipe={recipe} totalCalories={totalCalories} />
+            <DisplayIngredients
+              recipe={recipe}
+              totalCalories={recipe.totalCalories}
+            />
           </div>
           <div className="flex flex-col items-center">
-            {recipe.thumbnailUrl ? (
+            {thumbnail ? (
               <Image
-                src={recipe.thumbnailUrl}
+                src={thumbnail}
                 alt=""
                 width={496}
                 height={496}
+                priority={true}
               ></Image>
             ) : (
               <div className="w-496 h-496"></div>
@@ -52,7 +95,7 @@ const DisplayIngredients = ({
   totalCalories,
 }: {
   recipe: Recipe;
-  totalCalories: number;
+  totalCalories: number | undefined;
 }) => {
   return (
     <>
@@ -72,8 +115,12 @@ const DisplayIngredients = ({
           ))}
         </section>
         <section className="w-full h-14 flex border-t border-border items-center">
-          <p className="ml-2 w-3/4 text-left">{recipe.durcation}min</p>
-          <p className="mr-2 w-1/4">{totalCalories}kcal</p>
+          <p className="ml-2 w-1/2 text-left">{recipe.duration}min</p>
+          {totalCalories ? (
+            <p className="mr-2 w-1/2 text-right">{totalCalories}kcal</p>
+          ) : (
+            <></>
+          )}
         </section>
       </section>
     </>
@@ -81,26 +128,54 @@ const DisplayIngredients = ({
 };
 
 const DisplaySteps = ({ descriptions }: { descriptions: Description[] }) => {
+  const [descriptionImages, setDescriptionImages] = useState<
+    { file: string; index: number }[]
+  >([]);
+
+  useEffect(() => {
+    const fetchDescribtionImages = async () => {
+      const promises = descriptions.map(async (e, index) => {
+        if (e.imageUrl !== "") {
+          const result = await loadImage(e.imageUrl);
+          return { file: result.result, index };
+        }
+        return null;
+      });
+
+      const imageResults = await Promise.all(promises);
+
+      const validImages = imageResults.filter((img) => img !== null) as {
+        file: string;
+        index: number;
+      }[];
+      setDescriptionImages(validImages);
+    };
+
+    fetchDescribtionImages();
+  }, [descriptions]);
+
   return (
-    <>
-      <section className="w-11/12 mb-8">
-        {descriptions.map((description, index) => (
-          <section className="flex flex-col border-b border-b-border mb-2">
-            <h1 className="text-xl text-text">Step: {index + 1}</h1>
-            <p className="text-text mb-2">{description.text}</p>
-            {description.imageUrl != "none" ? (
-              <Image
-                src={""}
-                alt={`image-for-step-${index}`}
-                width={200}
-                height={200}
-              />
-            ) : (
-              <></>
-            )}
-          </section>
-        ))}
-      </section>
-    </>
+    <section className="w-11/12 mb-8">
+      {descriptions.map((description, index) => (
+        <section
+          className="flex flex-col border-b border-b-border mb-2"
+          key={index}
+        >
+          <h1 className="text-xl text-text">Step: {index + 1}</h1>
+          <p className="text-text mb-2">{description.text}</p>
+          {descriptionImages.find((img) => img.index === index) ? (
+            <Image
+              src={
+                descriptionImages.find((img) => img.index === index)?.file || ""
+              }
+              alt={`image-for-step-${index}`}
+              width={200}
+              height={200}
+              priority={true}
+            />
+          ) : null}
+        </section>
+      ))}
+    </section>
   );
 };

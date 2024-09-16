@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import { Ingredient } from "../../utils/types";
 import { useState } from "react";
 import { addProduct } from "../../api/firebase/firestore/addProduct";
+import NumberInputField from "./NumberInputField";
 
 export default function IngredientNotFound({
   ingredient,
@@ -34,16 +35,15 @@ export default function IngredientNotFound({
           placeholder="unit"
           onChange={(e) => setProduct({ ...product, unit: e.target.value })}
         />
-        <input
-          className="mt-2 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
-          type="number"
+        <NumberInputField
+          customStyle="mt-2 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
           value={product.calories}
-          placeholder="kcal"
-          onChange={(e) =>
-            setProduct({ ...product, calories: parseInt(e.target.value) })
-          }
+          handleChange={(e) => setProduct({ ...product, calories: e })}
         />
-        <button className="mt-16 w-24 h-8 border border-border" onClick={submit}>
+        <button
+          className="mt-16 w-24 h-8 border border-border"
+          onClick={submit}
+        >
           submit
         </button>
         <p className="text-center text-error">{errorMessage}</p>

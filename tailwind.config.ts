@@ -25,6 +25,7 @@ const config: Config = {
         'background': '#E4D5C6',
         'border': '#A5A3A3',
         'primary': '#f05c33',
+        'label':'#c4bec2',
         'secondary': '#757575',
         'accent': '#b19764',
         'error': '#FF0000',
