@@ -2,7 +2,6 @@
 
 import {
   Description,
-  DescriptionImagesWithIndex,
   Recipe,
 } from "@/app/utils/types";
 import { useEffect, useState } from "react";
@@ -56,8 +55,7 @@ export default function DisplayRecipe() {
 
   return (
     <>
-      <main className="min-w-screen  bg-background">
-        <Navbar />
+      <main className="min-w-screen bg-background">
         <section className="min-h-screen md:grid grid-cols-3 justify-center items-center flex flex-col">
           <div className="h-full w-full flex justify-center">
             <DisplayIngredients

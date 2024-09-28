@@ -21,13 +21,12 @@ const config: Config = {
         '128': '32rem',
         '496': '31rem'
       }, colors: {
-        'text': '#000000',
-        'background': '#E4D5C6',
-        'border': '#A5A3A3',
-        'primary': '#f05c33',
-        'label':'#c4bec2',
-        'secondary': '#757575',
-        'accent': '#b19764',
+        'text': 'rgba(var(--text))',
+        'background': 'rgba(var(--background))',
+        'border': 'rgba(var(--border))',
+        'primary': 'rgba(var(--primary))',
+        'secondary': 'rgba(var(--secondary))',
+        'accent': 'rgba(var(--accent))',
         'error': '#FF0000',
       }
     },

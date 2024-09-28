@@ -1,14 +1,28 @@
 'use server'
 
-import { collection, getDocs, query, getDoc } from "firebase/firestore"
+import { collection, getDocs, query, getDoc, limit, startAfter, doc } from "firebase/firestore"
 import { db } from "../connection"
 import { Ingredient, IngredientWithAmount, Recipe } from "@/app/utils/types";
 
-export const getRecipes = async (): Promise<{ result: Recipe[], error: string }> => {
+export const getRecipes = async (numberOfItemsPerFetch: number, lastFetchedDoc: string | null): Promise<{ result: Recipe[], error: string, lastDoc: any, hasMore: boolean }> => {
     let result: Recipe[] = [];
     let error = "";
-    const q = query(collection(db, 'recipes'));
+    let lastDoc = lastFetchedDoc;
+    let hasMore = true;
+    let q = null;
+
+    if (lastFetchedDoc) {
+        const lastFetchedDocRef = await getDoc(doc(db, 'recipes', lastFetchedDoc));
+        q = query(collection(db, 'recipes'), startAfter(lastFetchedDocRef), limit(numberOfItemsPerFetch));
+    } else {
+        q = query(collection(db, 'recipes'), limit(numberOfItemsPerFetch));
+    }
+
     const querySnapshot = await getDocs(q);
+    if (querySnapshot.size < numberOfItemsPerFetch) {
+        hasMore = false;
+
+    }
 
     if (querySnapshot.size > 0) {
         result = await Promise.all(querySnapshot.docs.map(async (doc) => {
@@ -34,9 +48,12 @@ export const getRecipes = async (): Promise<{ result: Recipe[], error: string }>
             })
             return recipe as Recipe;
         }));
+        lastDoc = result[querySnapshot.size - 1].name;
     } else {
-        error = "No recipes found";
+        if (!lastDoc) {
+            error = "No recipes found";
+        }
     }
 
-    return { result, error };
+    return { result, error, lastDoc, hasMore };
 }

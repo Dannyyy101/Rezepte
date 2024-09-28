@@ -15,6 +15,7 @@ import NumberInputField from "../components/ui/NumberInputField";
 import { saveImage } from "../api/firebase/firestore/saveImage";
 import Navbar from "../components/ui/Navbar";
 import AddImageButton from "../components/ui/AddImageButton";
+import { useRouter } from "next/navigation";
 
 export default function CreateRecipe() {
   const [recipe, setRecipe] = useState<Recipe>({
@@ -40,6 +41,7 @@ export default function CreateRecipe() {
 
   const totalCalories = 400;
   const mainRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
 
   const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
@@ -69,11 +71,11 @@ export default function CreateRecipe() {
         descriptions[e.index - 1].imageUrl = result;
         setErrorMessage(error);
       });
-    
+
       await Promise.all(descriptionPromises);
     }
-    
-    console.log(descriptions)
+
+    console.log(descriptions);
     const updatedRecipe: Recipe = {
       ...recipe,
       thumbnailUrl: thumbnailPath,
@@ -84,15 +86,17 @@ export default function CreateRecipe() {
     if (error === "product-not-found" && product) {
       setIngredientNotFound({ ingredient: product, found: false });
     }
-  };
 
+    if (error === "" && !product) {
+      router.push("/");
+    }
+  };
   return (
     <>
       <main
         ref={mainRef}
         className="min-w-screen bg-background flex flex-col items-center"
       >
-        <Navbar />
         <section className="min-h-screen md:grid grid-cols-3 justify-center items-center flex flex-col">
           <div className="w-full h-full flex justify-center">
             <div>

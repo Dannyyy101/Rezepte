@@ -8,42 +8,30 @@
   }
 }
 html {
-	scroll-behavior: smooth;
-}
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
+  scroll-behavior: smooth;
 }
 
-/* Firefox */
-input[type=number] {
-  -moz-appearance: textfield;
+.light {
+  --text: 17, 16, 14;
+  --background: 220, 222, 224;
+  --primary: 204, 56, 15;
+  --secondary: 193, 174, 138;
+  --accent: 160, 130, 70;
+  background: rgba(var(--background));
+}
+.dark {
+  --text: 241, 240, 238;
+  --background: 31, 33, 35;
+  --primary: 240, 92, 51;
+  --secondary: 117, 98, 62;
+  --accent: 185, 155, 95;
+  background: rgba(var(--background));
 }
 
-/* HTML: <div class="loader"></div> */
-.loader {
-  width: 50px;
-  aspect-ratio: 1;
-  border-radius: 50%;
-  border: 8px solid #514b82;
-  animation:
-    l20-1 0.8s infinite linear alternate,
-    l20-2 1.6s infinite linear;
+p, button, input, label{
+  color: rgba(var(--text));
 }
-@keyframes l20-1{
-   0%    {clip-path: polygon(50% 50%,0       0,  50%   0%,  50%    0%, 50%    0%, 50%    0%, 50%    0% )}
-   12.5% {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100%   0%, 100%   0%, 100%   0% )}
-   25%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 100% 100%, 100% 100% )}
-   50%   {clip-path: polygon(50% 50%,0       0,  50%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   62.5% {clip-path: polygon(50% 50%,100%    0, 100%   0%,  100%   0%, 100% 100%, 50%  100%, 0%   100% )}
-   75%   {clip-path: polygon(50% 50%,100% 100%, 100% 100%,  100% 100%, 100% 100%, 50%  100%, 0%   100% )}
-   100%  {clip-path: polygon(50% 50%,50%  100%,  50% 100%,   50% 100%,  50% 100%, 50%  100%, 0%   100% )}
-}
-@keyframes l20-2{ 
-  0%    {transform:scaleY(1)  rotate(0deg)}
-  49.99%{transform:scaleY(1)  rotate(135deg)}
-  50%   {transform:scaleY(-1) rotate(0deg)}
-  100%  {transform:scaleY(-1) rotate(-135deg)}
+
+h1, h2, h3, h4, h5{
+  color: rgba(var(--primary));
 }

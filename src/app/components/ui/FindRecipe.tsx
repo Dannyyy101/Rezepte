@@ -1,14 +1,14 @@
 "use client";
-import { useEffect, useRef, useState } from "react";
-import InputField from "./InputField";
+import { useRef, useState } from "react";
 import { Recipe } from "../../utils/types";
 import { searchForRecipeByName } from "../../api/firebase/firestore/searchForRecipeByName";
-import DisplayRecipe from "./DisplayRecipe";
-import { recipes } from "../../utils/exampleData";
 
-export default function FindRecipe() {
+interface FindRecipeProps {
+  setSearchResult: (recipe: Recipe[]) => void;
+}
+
+export default function FindRecipe({ setSearchResult }: FindRecipeProps) {
   const [search, setSearch] = useState("");
-  const [searchResult, setSearchResult] = useState<Recipe[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>("");
 
   const debounceSearch = async (search: string): Promise<boolean> => {
@@ -39,7 +39,7 @@ export default function FindRecipe() {
 
   return (
     <>
-      <section className="w-full flex justify-center items-center flex-col">
+      <section className="w-full flex justify-center items-center flex-col mt-16">
         <input
           ref={searchRef}
           type="text"
@@ -49,11 +49,6 @@ export default function FindRecipe() {
           placeholder="Search"
         />
         <p className="text-error text-center mt-1">{errorMessage}</p>
-        <section className="w-full mt-8 flex flex-wrap justify-center">
-          {searchResult.map((recipe: Recipe, index: number) => (
-            <DisplayRecipe recipe={recipe} key={index} />
-          ))}
-        </section>
       </section>
     </>
   );
