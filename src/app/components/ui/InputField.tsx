@@ -1,4 +1,4 @@
-import { InputFieldInterface } from "../utils/types";
+import { InputFieldInterface } from "../../utils/types";
 
 export default function InputField({
   type,

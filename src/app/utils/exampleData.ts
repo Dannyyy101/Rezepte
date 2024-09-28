@@ -9,35 +9,40 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Spaghetti",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 200
             },
             {
                 ingredient: {
                     name: "Pancetta",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 100
             },
             {
                 ingredient: {
                     name: "Parmesan Cheese",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 50
             },
             {
                 ingredient: {
                     name: "Eggs",
-                    unit: "pieces"
+                    unit: "pieces",
+                    calories:100
                 },
                 amount: 3
             },
             {
                 ingredient: {
                     name: "Black Pepper",
-                    unit: "ts"
+                    unit: "ts",
+                    calories:100
                 },
                 amount: 1
             }
@@ -65,7 +70,8 @@ export const recipes: Recipe[] = [
             }
         ],
         thumbnailUrl: "",
-        durcation:20
+        duration:20,
+        portions:1
     },
     {
         id: 2,
@@ -74,35 +80,40 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Pizza Dough",
-                    unit: "piece"
+                    unit: "piece",
+                    calories:100
                 },
                 amount: 1
             },
             {
                 ingredient: {
                     name: "Tomato Sauce",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 100
             },
             {
                 ingredient: {
                     name: "Mozzarella Cheese",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 150
             },
             {
                 ingredient: {
                     name: "Fresh Basil",
-                    unit: "leaves"
+                    unit: "leaves",
+                    calories:100
                 },
                 amount: 10
             },
             {
                 ingredient: {
                     name: "Olive Oil",
-                    unit: "ts"
+                    unit: "ts",
+                    calories:100
                 },
                 amount: 1
             }
@@ -130,7 +141,8 @@ export const recipes: Recipe[] = [
             }
         ],
         thumbnailUrl: "",
-        durcation:20
+        duration:20,
+        portions:1
     },
     {
         id: 3,
@@ -139,49 +151,56 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Chicken Breast",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 500
             },
             {
                 ingredient: {
                     name: "Coconut Milk",
-                    unit: "ml"
+                    unit: "ml",
+                    calories:100
                 },
                 amount: 400
             },
             {
                 ingredient: {
                     name: "Curry Paste",
-                    unit: "tablespoons"
+                    unit: "tablespoons",
+                    calories:100
                 },
                 amount: 3
             },
             {
                 ingredient: {
                     name: "Onion",
-                    unit: "pieces"
+                    unit: "pieces",
+                    calories:100
                 },
                 amount: 1
             },
             {
                 ingredient: {
                     name: "Garlic",
-                    unit: "cloves"
+                    unit: "cloves",
+                    calories:100
                 },
                 amount: 3
             },
             {
                 ingredient: {
                     name: "Ginger",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 20
             },
             {
                 ingredient: {
                     name: "Coriander",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 5
             }
@@ -213,7 +232,8 @@ export const recipes: Recipe[] = [
             }
         ],
         thumbnailUrl: "",
-        durcation:20
+        duration:20
+        , portions:1
     },
     {
         id: 4,
@@ -222,49 +242,56 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Flour",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 200
             },
             {
                 ingredient: {
                     name: "Sugar",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 150
             },
             {
                 ingredient: {
                     name: "Cocoa Powder",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 50
             },
             {
                 ingredient: {
                     name: "Baking Powder",
-                    unit: "ts"
+                    unit: "ts",
+                    calories:100
                 },
                 amount: 2
             },
             {
                 ingredient: {
                     name: "Eggs",
-                    unit: "pieces"
+                    unit: "pieces",
+                    calories:100
                 },
                 amount: 2
             },
             {
                 ingredient: {
                     name: "Butter",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 100
             },
             {
                 ingredient: {
                     name: "Milk",
-                    unit: "ml"
+                    unit: "ml",
+                    calories:100
                 },
                 amount: 200
             }
@@ -296,7 +323,8 @@ export const recipes: Recipe[] = [
             }
         ],
         thumbnailUrl: "",
-        durcation:20
+        duration:20,
+        portions:1
     },
     {
         id: 5,
@@ -305,35 +333,40 @@ export const recipes: Recipe[] = [
             {
                 ingredient: {
                     name: "Romaine Lettuce",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 200
             },
             {
                 ingredient: {
                     name: "Chicken Breast",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 150
             },
             {
                 ingredient: {
                     name: "Croutons",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 50
             },
             {
                 ingredient: {
                     name: "Parmesan Cheese",
-                    unit: "g"
+                    unit: "g",
+                    calories:100
                 },
                 amount: 30
             },
             {
                 ingredient: {
                     name: "Caesar Dressing",
-                    unit: "tablespoons"
+                    unit: "tablespoons",
+                    calories:100
                 },
                 amount: 3
             }
@@ -361,6 +394,7 @@ export const recipes: Recipe[] = [
             }
         ],
         thumbnailUrl: "",
-        durcation:20
+        duration:20,
+        portions:1
     }
 ];
