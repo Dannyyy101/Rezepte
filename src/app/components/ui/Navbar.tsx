@@ -36,7 +36,7 @@ export default function Navbar() {
         <section className="w-1/3 flex ml-2 items-center">
           <div className="flex items-center justify-center text-lg text-text ml-10">
             <Image
-              className={`text-text w-14 h-14 ${
+              className={`text-text w-15 h-15 ${
                 theme === "light" ? "" : "invert"
               }`}
               src={logo}
