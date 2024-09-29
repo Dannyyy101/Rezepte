@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  Description,
-  Recipe,
-} from "@/app/utils/types";
+import { Description, Recipe } from "@/app/utils/types";
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import downSymbol from "../../../../public/keyboard_double_arrow_down_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz48.svg";
@@ -12,6 +9,7 @@ import { getRecipeByName } from "@/app/api/firebase/firestore/getRecipeByName";
 import Navbar from "@/app/components/ui/Navbar";
 import Loading from "@/app/components/ui/Loading";
 import { loadImage } from "@/app/api/firebase/firestore/loadImage";
+import Link from "next/link";
 export default function DisplayRecipe() {
   const params = useParams<{ id: string }>();
   const [recipe, setRecipe] = useState<Recipe>({
@@ -78,6 +76,14 @@ export default function DisplayRecipe() {
             <a href="#description" className="mt-16 animate-bounce">
               <Image src={downSymbol} alt="arrowDownSymbol"></Image>
             </a>
+          </div>
+          <div className="absolute top-28 right-20 flex justify-center items-center">
+            <Link
+              href={`/updateRecipe/${recipe.name}`}
+              className="h-10 w-20 border border-border rounded text-text flex justify-center items-center"
+            >
+              edit
+            </Link>
           </div>
         </section>
         <section id="description" className="w-11/12 flex justify-center">
