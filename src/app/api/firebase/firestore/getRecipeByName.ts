@@ -22,6 +22,8 @@ export const getRecipeByName = async (name: string): Promise<{ result: Recipe | 
             }
         })
         result = recipe as Recipe;
+    }else{
+        error = "No recipe found";
     }
     return { result, error }
 }
