@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { getRecipeByName } from "../../api/firebase/firestore/getRecipeByName";
 import EditRecipe from "@/app/components/EditRecipe";
+import React from "react";
 import { deleteRecipeByName } from "@/app/api/firebase/firestore/deleteRecipeByName";
 
 export default function UpdateRecipe() {

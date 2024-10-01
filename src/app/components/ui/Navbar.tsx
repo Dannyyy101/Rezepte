@@ -7,9 +7,27 @@ import light from "../../../../public/light_mode_48dp_11100E_FILL0_wght400_GRAD0
 import dark from "../../../../public/dark_mode_48dp_F1F0EE_FILL0_wght400_GRAD0_opsz48.svg";
 
 import logo from "../../favicon.ico";
-import FindRecipe from "./FindRecipe";
+
+import React from "react";
+import { useAuthContext } from "@/app/context/AuthContext";
+import { AppUser } from "@/app/utils/types";
+import { loadImage } from "@/app/api/firebase/firestore/loadImage";
+import { getUserByEmail } from "@/app/api/firebase/firestore/getUserByEmail";
+
 export default function Navbar() {
   const [theme, setTheme] = useState<string>("");
+  const [profileImage, setProfileImage] = useState("");
+
+  const { user } = useAuthContext() as { user: AppUser };
+  useEffect(() => {
+    getUserByEmail(user.email).then((e) => {
+      if (e.result?.photoURL) {
+        loadImage(e.result?.photoURL).then((image) => {
+          setProfileImage(image.result);
+        });
+      }
+    });
+  }, [user.email]);
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -44,7 +62,9 @@ export default function Navbar() {
               width={60}
               height={60}
             />
-            <Link href={"/"} className="hover:text-primary">Home</Link>
+            <Link href={"/"} className="hover:text-primary">
+              Home
+            </Link>
           </div>
           <div className="flex items-center justify-center text-lg text-text ml-14 hover:text-primary">
             <Link href={"/createRecipe"}>create Recipe</Link>
@@ -60,20 +80,31 @@ export default function Navbar() {
               height={32}
             />
           </button>
-          <Link
-            href={"/user"}
-            className="w-10 h-10 mr-10 border-2 border-border rounded-full "
-          >
-            <Image
-              className="rounded-full text-text mr-16"
-              src={
-                "https://firebasestorage.googleapis.com/v0/b/nutrition101-42699.appspot.com/o/images%2Frecipes%2FHallo%2Fthumbnail.jpg?alt=media&token=d723a95b-ea5a-4319-86d3-e402eb75f7d3"
-              }
-              alt="profile-image"
-              width={40}
-              height={40}
-            />
-          </Link>
+          {user ? (
+            profileImage ? (
+              <Link
+                href={"/user"}
+                className="w-10 h-10 mr-10 border-2 border-border rounded-full"
+              >
+                <Image
+                  className="rounded-full text-text mr-16"
+                  src={profileImage}
+                  alt="profile-image"
+                  width={40}
+                  height={40}
+                />
+              </Link>
+            ) : (
+              <div className="w-10 h-10 mr-10"></div>
+            )
+          ) : (
+            <Link
+              className="flex items-center justify-center text-lg text-text mr-10 hover:text-primary"
+              href={"/login"}
+            >
+              Login
+            </Link>
+          )}
         </div>
       </main>
     </>

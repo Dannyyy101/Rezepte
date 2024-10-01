@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./styles/globals.css";
 import Navbar from "./components/ui/Navbar";
 import ThemeProvider from "./components/ThemeProvider";
+import { AuthContextProvider } from "./context/AuthContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,9 +30,11 @@ export default function RootLayout({
         content="width=device-width, initial-scale=1.0"
       ></meta>
       <body>
-        <ThemeProvider>
-          <Navbar />
-          {children}
+      <ThemeProvider>
+        <AuthContextProvider>
+            <Navbar />
+            {children}
+        </AuthContextProvider>
         </ThemeProvider>
       </body>
     </html>

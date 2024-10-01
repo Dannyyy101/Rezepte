@@ -1,3 +1,4 @@
+import { User } from "firebase/auth";
 import { DocumentReference } from "firebase/firestore";
 import { InputHTMLAttributes } from "react";
 
@@ -64,4 +65,12 @@ export interface InputFieldInterface {
 export interface DescriptionImagesWithIndex {
     file: File;
     index: number;
+}
+
+export interface AppUser{
+    firstName?:string;
+    lastName?:string;
+    email:string;
+    password:string;
+    photoURL?: string | null;
 }
