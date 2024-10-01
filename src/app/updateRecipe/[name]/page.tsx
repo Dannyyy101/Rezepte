@@ -18,6 +18,7 @@ import AddImageButton from "../../components/ui/AddImageButton";
 import { useParams, useRouter } from "next/navigation";
 import { getRecipeByName } from "../../api/firebase/firestore/getRecipeByName";
 import EditRecipe from "@/app/components/EditRecipe";
+import React from "react";
 
 export default function UpdateRecipe() {
   const [recipe, setRecipe] = useState<Recipe | null>(null);

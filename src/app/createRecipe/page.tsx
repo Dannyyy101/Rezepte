@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Recipe } from "../utils/types";
 import EditRecipe from "../components/EditRecipe";
+import React from "react";
 
 export default function CreateRecipe() {
   const [recipe, setRecipe] = useState<Recipe>({

@@ -17,6 +17,7 @@ html {
   --primary: 204, 56, 15;
   --secondary: 193, 174, 138;
   --accent: 160, 130, 70;
+  --border: 17, 16, 14;
   background: rgba(var(--background));
 }
 .dark {
@@ -25,6 +26,7 @@ html {
   --primary: 240, 92, 51;
   --secondary: 117, 98, 62;
   --accent: 185, 155, 95;
+  --border: 241, 240, 238;
   background: rgba(var(--background));
 }
 

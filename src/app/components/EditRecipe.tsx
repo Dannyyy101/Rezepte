@@ -16,6 +16,7 @@ import AddImageButton from "./ui/AddImageButton";
 import { FocuseChildComponent } from "./ui/FocusChildComponent";
 import IngredientNotFound from "./ui/IngredientNotFound";
 import NumberInputField from "./ui/NumberInputField";
+import React from "react";
 
 export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
   const [recipe, setRecipe] = useState<Recipe>(givenRecipe);
@@ -44,6 +45,7 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
     let descriptions = [...recipe.description];
     if (image) {
       const { result, error } = await saveImage(
+        "images/recipes",
         image,
         "thumbnail",
         recipe.name
@@ -54,6 +56,7 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
     if (descriptionImages.length > 0) {
       const descriptionPromises = descriptionImages.map(async (e) => {
         const { result, error } = await saveImage(
+          "images/recipes",
           e.file,
           "step" + e.index,
           recipe.name

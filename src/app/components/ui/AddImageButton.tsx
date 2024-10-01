@@ -1,6 +1,7 @@
 import Image from "next/image";
 import imageSymbol from "../../../../public/image_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz20.svg";
 import { useRef } from "react";
+import React from "react";
 
 interface addImageButtonProps {
   text: string;

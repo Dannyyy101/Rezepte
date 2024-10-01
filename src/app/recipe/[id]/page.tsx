@@ -10,6 +10,7 @@ import Navbar from "@/app/components/ui/Navbar";
 import Loading from "@/app/components/ui/Loading";
 import { loadImage } from "@/app/api/firebase/firestore/loadImage";
 import Link from "next/link";
+import React from "react";
 export default function DisplayRecipe() {
   const params = useParams<{ id: string }>();
   const [recipe, setRecipe] = useState<Recipe>({
