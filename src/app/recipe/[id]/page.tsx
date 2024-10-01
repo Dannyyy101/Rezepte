@@ -6,11 +6,12 @@ import Image from "next/image";
 import downSymbol from "../../../../public/keyboard_double_arrow_down_48dp_A5A3A3_FILL0_wght400_GRAD0_opsz48.svg";
 import { useParams } from "next/navigation";
 import { getRecipeByName } from "@/app/api/firebase/firestore/getRecipeByName";
-import Navbar from "@/app/components/ui/Navbar";
 import Loading from "@/app/components/ui/Loading";
 import { loadImage } from "@/app/api/firebase/firestore/loadImage";
 import Link from "next/link";
 import React from "react";
+import ErrorScreen from "@/app/components/ui/ErrorScreen";
+
 export default function DisplayRecipe() {
   const params = useParams<{ id: string }>();
   const [recipe, setRecipe] = useState<Recipe>({
@@ -24,14 +25,17 @@ export default function DisplayRecipe() {
   });
   const [thumbnail, setThumbnail] = useState<string>("");
   const [loading, setLoading] = useState(true);
+  const [errorMessage, setErrorMessage] = useState("");
 
   useEffect(() => {
     const fetchRecipe = async () => {
       setLoading(true);
-      const result = await getRecipeByName(params.id);
-      if (result && result.result) {
-        setRecipe(result.result);
-      }
+      await getRecipeByName(params.id).then((result) => {
+        if (result.result) {
+          setRecipe(result.result);
+        }
+        setErrorMessage(result.error);
+      });
     };
     fetchRecipe();
   }, [params.id]);
@@ -54,43 +58,47 @@ export default function DisplayRecipe() {
 
   return (
     <>
-      <main className="min-w-screen bg-background">
-        <section className="min-h-screen md:grid grid-cols-3 justify-center items-center flex flex-col">
-          <div className="h-full w-full flex justify-center">
-            <DisplayIngredients
-              recipe={recipe}
-              totalCalories={recipe.totalCalories}
-            />
-          </div>
-          <div className="flex flex-col items-center">
-            {thumbnail ? (
-              <Image
-                src={thumbnail}
-                alt=""
-                width={496}
-                height={496}
-                priority={true}
-              ></Image>
-            ) : (
-              <div className="w-496 h-496"></div>
-            )}
-            <a href="#description" className="mt-16 animate-bounce">
-              <Image src={downSymbol} alt="arrowDownSymbol"></Image>
-            </a>
-          </div>
-          <div className="absolute top-28 right-20 flex justify-center items-center">
-            <Link
-              href={`/updateRecipe/${recipe.name}`}
-              className="h-10 w-20 border border-border rounded text-text flex justify-center items-center"
-            >
-              edit
-            </Link>
-          </div>
-        </section>
-        <section id="description" className="w-11/12 flex justify-center">
-          <DisplaySteps descriptions={recipe.description} />
-        </section>
-      </main>
+      {errorMessage === "" ? (
+        <main className="min-w-screen bg-background">
+          <section className="min-h-screen md:grid grid-cols-3 justify-center items-center flex flex-col">
+            <div className="h-full w-full flex justify-center">
+              <DisplayIngredients
+                recipe={recipe}
+                totalCalories={recipe.totalCalories}
+              />
+            </div>
+            <div className="flex flex-col items-center">
+              {thumbnail ? (
+                <Image
+                  src={thumbnail}
+                  alt=""
+                  width={496}
+                  height={496}
+                  priority={true}
+                ></Image>
+              ) : (
+                <div className="w-496 h-496"></div>
+              )}
+              <a href="#description" className="mt-16 animate-bounce">
+                <Image src={downSymbol} alt="arrowDownSymbol"></Image>
+              </a>
+            </div>
+            <div className="absolute top-28 right-20 flex justify-center items-center">
+              <Link
+                href={`/updateRecipe/${recipe.name}`}
+                className="h-10 w-20 border border-border rounded text-text flex justify-center items-center"
+              >
+                edit
+              </Link>
+            </div>
+          </section>
+          <section id="description" className="w-11/12 flex justify-center">
+            <DisplaySteps descriptions={recipe.description} />
+          </section>
+        </main>
+      ) : (
+        <ErrorScreen errorMessage={errorMessage}/>
+      )}
     </>
   );
 }
