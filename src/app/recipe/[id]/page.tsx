@@ -129,11 +129,8 @@ const DisplayIngredients = ({
         </section>
         <section className="w-full h-14 flex border-t border-border items-center">
           <p className="ml-2 w-1/2 text-left">{recipe.duration}min</p>
-          {totalCalories ? (
-            <p className="mr-2 w-1/2 text-right">{totalCalories}kcal</p>
-          ) : (
-            <></>
-          )}
+
+            <p className="mr-10 w-1/2 text-right">{recipe.portions}servings</p>
         </section>
       </section>
     </>

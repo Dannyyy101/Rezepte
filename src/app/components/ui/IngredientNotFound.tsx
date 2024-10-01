@@ -4,6 +4,7 @@ import { Ingredient } from "../../utils/types";
 import { useState } from "react";
 import { addProduct } from "../../api/firebase/firestore/addProduct";
 import NumberInputField from "./NumberInputField";
+import React from "react";
 
 export default function IngredientNotFound({
   ingredient,
@@ -26,22 +27,27 @@ export default function IngredientNotFound({
 
   return (
     <>
-      <main className="min-w-52 max-w-64 h-64 border-border border flex items-center flex-col">
-        <h1 className="mt-2 text-xl">Couldn't find {ingredient.name}</h1>
+      <main className="w-full h-full border-border border flex items-center flex-col bg-background shadow-md rounded">
+        <h1 className="mt-8 text-xl">Couldn't find {ingredient.name}</h1>
+        <div className="w-full flex flex-col items-center mt-6">
+        <label className="w-10/12">unit</label>
         <input
-          className="mt-6 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
+          className="w-10/12 h-10 focus:outline-none border-border border pl-1 bg-transparent rounded"
           type="text"
           value={product.unit}
-          placeholder="unit"
           onChange={(e) => setProduct({ ...product, unit: e.target.value })}
         />
-        <NumberInputField
-          customStyle="mt-2 text-left pl-1 bg-transparent border-b border-border focus:outline-none"
-          value={product.calories}
-          handleChange={(e) => setProduct({ ...product, calories: e })}
-        />
+        </div>
+        <div className="w-full flex flex-col items-center mt-2">
+          <label className="w-10/12">calories</label>
+          <NumberInputField
+            customStyle="w-10/12 h-10 focus:outline-none border-border border pl-1 bg-transparent rounded"
+            value={product.calories}
+            handleChange={(e) => setProduct({ ...product, calories: e })}
+          />
+        </div>
         <button
-          className="mt-16 w-24 h-8 border border-border"
+          className="mt-12 w-24 h-8 border border-border rounded"
           onClick={submit}
         >
           submit

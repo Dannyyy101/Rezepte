@@ -16,18 +16,9 @@ import { getUserByEmail } from "@/app/api/firebase/firestore/getUserByEmail";
 
 export default function Navbar() {
   const [theme, setTheme] = useState<string>("");
-  const [profileImage, setProfileImage] = useState("");
 
   const { user } = useAuthContext() as { user: AppUser };
-  useEffect(() => {
-    getUserByEmail(user.email).then((e) => {
-      if (e.result?.photoURL) {
-        loadImage(e.result?.photoURL).then((image) => {
-          setProfileImage(image.result);
-        });
-      }
-    });
-  }, [user.email]);
+
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
@@ -47,7 +38,7 @@ export default function Navbar() {
     setTheme(newTheme);
     localStorage.setItem("theme", newTheme);
   };
-
+  console.log(user)
   return (
     <>
       <main className="sticky w-screen h-16 bg-background border-b-2 top-0 border-border flex">
@@ -81,14 +72,14 @@ export default function Navbar() {
             />
           </button>
           {user ? (
-            profileImage ? (
+            user.photoURL ? (
               <Link
                 href={"/user"}
                 className="w-10 h-10 mr-10 border-2 border-border rounded-full"
               >
                 <Image
                   className="rounded-full text-text mr-16"
-                  src={profileImage}
+                  src={user.photoURL}
                   alt="profile-image"
                   width={40}
                   height={40}

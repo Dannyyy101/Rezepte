@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useRef, useState } from "react";
 import React from "react";
 import Link from "next/link";
 import Image from "next/image";
@@ -10,6 +10,7 @@ import { useRouter } from "next/navigation";
 import { AppUser } from "../utils/types";
 import AddImageButton from "../components/ui/AddImageButton";
 import { saveImage } from "../api/firebase/firestore/saveImage";
+import { updateUser } from "../api/firebase/auth/updateUser";
 
 export default function Register() {
   const [user, setUser] = useState<AppUser>({
@@ -17,50 +18,53 @@ export default function Register() {
     lastName: "",
     email: "",
     password: "",
+    photoURL: "",
   });
   const [image, setImage] = useState<File | null>(null);
   const [errorMessage, setErrorMessage] = useState("");
 
   const router = useRouter();
+  const mainRef = useRef<HTMLDivElement>(null);
 
   const handleSubmit = async () => {
     let userTemp = user;
-    if (image) {
-      const { result, error: imageError } = await saveImage(
-        `user/${user.email}`,
-        image,
-        "profileImage",
-        "profileImage"
-      );
-      if (imageError) {
-        setErrorMessage(imageError);
-      } else {
-        userTemp.photoURL = result;
+
+    const { error: createUserError } = await createUser(userTemp);
+    if (createUserError) {
+      if (createUserError.includes("auth/email-already-in-use")) {
+        setErrorMessage("Email already exists");
+        return;
       }
-      const { error: createUserError } = await createUser(userTemp);
-      if (createUserError) {
-        if (createUserError.includes("auth/email-already-in-use")) {
-          setErrorMessage("Email already exists");
+    } else {
+      if (image) {
+        const { result, error: imageError } = await saveImage(
+          `user/${user.email}`,
+          image,
+          "profileImage",
+          "profileImage"
+        );
+        if (imageError) {
+          setErrorMessage(imageError);
+          return;
+        } else {
+          userTemp.photoURL = result;
+          await updateUser(userTemp);
         }
-        console.log(createUserError);
-      } else {
       }
-      router.push("/");
     }
+    router.push("/");
   };
 
-  const handleProfileImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImage(e.target.files?.[0]);
-    }
+  const handleProfileImageChange = (image: File) => {
+    setImage(image);
   };
   return (
     <>
-      <main className="w-screen flex justify-center mt-28">
+      <main className="w-screen flex justify-center mt-28" ref={mainRef}>
         <section className="hidden justify-center items-center w-3/12 h-128 bg-slate-400 rounded-l min-w-80 sm:flex">
           {image ? (
             <Image
-            className="rounded-full border-border border-2"
+              className="rounded-full border-border border-2"
               src={URL.createObjectURL(image)}
               alt=""
               width={200}
@@ -71,10 +75,11 @@ export default function Register() {
             <AddImageButton
               text="add profile image"
               handleClicked={handleProfileImageChange}
+              mainRef={mainRef}
             />
           )}
         </section>
-        <section className="flex flex-col items-center w-3/12 h-128 rounded border-border border min-w-80 sm:rounded-e">
+        <section className="flex flex-col items-center w-3/12 h-128 rounded border-border border min-w-80 sm:rounded-r sm:rounded-l-none">
           <div className="flex flex-col items-center w-11/12 h-128 mt-6">
             <h1 className="text-4xl">Register</h1>
             <div className="w-full flex mt-16">
@@ -111,7 +116,7 @@ export default function Register() {
             />
             <div className="w-full flex mt-1">
               <Link
-                href={"/register"}
+                href={"/login"}
                 className="w-1/2 text-left text-sm text-text hover:underline"
               >
                 Login

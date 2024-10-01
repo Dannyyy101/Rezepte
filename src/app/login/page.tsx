@@ -33,7 +33,7 @@ export default function Login() {
         <section className="hidden justify-center items-center w-3/12 h-128 bg-slate-400 rounded-l min-w-80 sm:flex">
           <Image src={background} alt="" />
         </section>
-        <section className="flex flex-col items-center w-3/12 h-128 rounded border-border border min-w-80 sm:rounded-e">
+        <section className="flex flex-col items-center w-3/12 h-128 rounded border-border border min-w-80 sm:rounded-r sm:rounded-l-none">
           <div className="flex flex-col items-center w-11/12 h-128 mt-6">
             <h1 className="text-4xl">Login</h1>
             <input

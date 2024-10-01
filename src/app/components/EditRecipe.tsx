@@ -17,6 +17,7 @@ import { FocuseChildComponent } from "./ui/FocusChildComponent";
 import IngredientNotFound from "./ui/IngredientNotFound";
 import NumberInputField from "./ui/NumberInputField";
 import React from "react";
+import { convertFirebaseErrorToUIErrors } from "../utils/convertFirebaseErrorsToUIErrors";
 
 export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
   const [recipe, setRecipe] = useState<Recipe>(givenRecipe);
@@ -34,10 +35,8 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
   const mainRef = useRef<HTMLDivElement>(null);
   const router = useRouter();
 
-  const handleThumbnailChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files) {
-      setImage(e.target.files?.[0]);
-    }
+  const handleThumbnailChange = (e: File) => {
+    setImage(e);
   };
 
   const submit = async () => {
@@ -51,7 +50,10 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
         recipe.name
       );
       thumbnailPath = result;
-      setErrorMessage(error);
+      if (error) {
+        setErrorMessage(convertFirebaseErrorToUIErrors(error));
+        return;
+      }
     }
     if (descriptionImages.length > 0) {
       const descriptionPromises = descriptionImages.map(async (e) => {
@@ -62,13 +64,15 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
           recipe.name
         );
         descriptions[e.index - 1].imageUrl = result;
-        setErrorMessage(error);
+        if (error) {
+          setErrorMessage(convertFirebaseErrorToUIErrors(error));
+          return;
+        }
       });
 
       await Promise.all(descriptionPromises);
     }
 
-    console.log(descriptions);
     const updatedRecipe: Recipe = {
       ...recipe,
       thumbnailUrl: thumbnailPath,
@@ -76,6 +80,7 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
     };
 
     const { error, product } = await addRecipe(updatedRecipe);
+    
     if (error === "product-not-found" && product) {
       setIngredientNotFound({ ingredient: product, found: false });
     }
@@ -110,16 +115,20 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
                 priority={true}
               ></Image>
             ) : (
-              <div className="w-496 h-496 flex justify-center items-center">
+              <div className="h-496 flex justify-center items-center">
                 <AddImageButton
+                  mainRef={mainRef}
                   text="Add thumbnail"
                   handleClicked={handleThumbnailChange}
                 />
               </div>
             )}
-            <button className="border-border border p-2" onClick={submit}>
+            <button className="mt-6 border-border border p-2" onClick={submit}>
               Create recipe
             </button>
+            <p className="mt-2 text-center text-sm text-error">
+              {errorMessage}
+            </p>
             <a href="#description" className="mt-16 animate-bounce">
               <Image
                 src={downSymbol}
@@ -136,6 +145,7 @@ export default function EditRecipe({ givenRecipe }: { givenRecipe: Recipe }) {
             descriptions={recipe.description}
             recipe={recipe}
             updateRecipe={setRecipe}
+            mainRef={mainRef}
           />
         </section>
 
@@ -261,12 +271,14 @@ const DisplaySteps = ({
   updateRecipe,
   images,
   setImages,
+  mainRef,
 }: {
   descriptions: Description[];
   recipe: Recipe;
   updateRecipe: (recipe: Recipe) => void;
   images: DescriptionImagesWithIndex[];
   setImages: (i: DescriptionImagesWithIndex[]) => void;
+  mainRef: React.RefObject<HTMLDivElement>;
 }) => {
   const addIngredientField = () => {
     let temp = recipe.description;
@@ -313,6 +325,7 @@ const DisplaySteps = ({
               />
             ) : (
               <AddImageButton
+                mainRef={mainRef}
                 text={`Add image`}
                 handleClicked={(e) => addDescriptionImageAtIndex(e, index + 1)}
               />

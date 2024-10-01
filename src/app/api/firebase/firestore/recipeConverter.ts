@@ -17,7 +17,8 @@ export const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
             ingredients: ingredientsWithRefs,
             description: recipe.description,
             duration: recipe.duration,
-            thumbnailUrl: recipe.thumbnailUrl
+            thumbnailUrl: recipe.thumbnailUrl,
+            portions: recipe.portions
         } as WithFieldValue<RecipeDBModel>;
 
     }, fromFirestore: (snapshot: any, options: any) => {
@@ -28,6 +29,7 @@ export const recipeConverter: FirestoreDataConverter<Recipe, RecipeDBModel> = {
             ingredients: data.ingredients,
             description: data.description,
             duration: data.duration,
+            portions: data.portions,
             thumbnailUrl: data.thumbnailUrl,
         } as Recipe;
     }

@@ -7,8 +7,17 @@
     text-wrap: balance;
   }
 }
-html {
+html,
+body {
+  width: 100%;  /* Adjust as needed */
+  height: 100%; /* Adjust as needed */
+  margin: 0;
+  padding: 0;
   scroll-behavior: smooth;
+}
+
+body {
+  position: relative;
 }
 
 .light {
@@ -30,10 +39,37 @@ html {
   background: rgba(var(--background));
 }
 
-p, button, input, label{
+p,
+button,
+input,
+label {
   color: rgba(var(--text));
 }
 
-h1, h2, h3, h4, h5{
+h1,
+h2,
+h3,
+h4,
+h5 {
   color: rgba(var(--primary));
+}
+
+.reactEasyCrop_Container {
+  position: relative;
+  width: 400px;
+  height: 400px;
+  background-color: #333;
+  margin-bottom: 20px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+
+.cropper {
+  width: 200px;
+  height: 400px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }

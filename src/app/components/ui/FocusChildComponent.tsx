@@ -1,3 +1,4 @@
+import React from "react";
 import { useEffect, useRef } from "react";
 import ReactDOM from "react-dom";
 
@@ -49,7 +50,7 @@ export const FocuseChildComponent: React.FC<FocuseChildComponentProps> = ({
   return ReactDOM.createPortal(
     <>
       <main
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        className="fixed z-20 w-96 h-96 m-auto inset-x-0 inset-y-0 bg-white rounded-sm overflow-y-scroll"
         ref={mainDivRef}
       >
         {children}
